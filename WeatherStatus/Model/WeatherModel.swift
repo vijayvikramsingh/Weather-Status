@@ -64,7 +64,7 @@ class WeatherModel: NSObject {
             
             let weatherData = WeatherData()
             weatherData.title = "Temprature:"
-            weatherData.value = "\(main["temp"]!) Kelvin"
+            weatherData.value = "\(Float(main["temp"]! as! NSNumber) - 273.15) °C"
             array.append(weatherData)
            
             let weatherData1 = WeatherData()
@@ -81,7 +81,7 @@ class WeatherModel: NSObject {
             
             let weatherData3 = WeatherData()
             weatherData3.title = "Wind Speed:"
-            weatherData3.value = "\(wind["speed"]!) meter/sec"
+            weatherData3.value = "\(Float(wind["speed"]! as! NSNumber)*1000/3600) km/hour"
             array.append(weatherData3)
         }
         

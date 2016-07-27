@@ -15,7 +15,8 @@ class WeatherViewController: UIViewController, LocationManagerDelegate, UIAlertV
     
     @IBOutlet weak var cityField: UITextField!
     var weatherItems = [WeatherData]()
-    
+    var isRequestInProgress : Bool = false // to stop other request, if one request is already running
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -44,6 +45,8 @@ class WeatherViewController: UIViewController, LocationManagerDelegate, UIAlertV
         let model = WeatherModel()
         
         self.weatherItems.removeAll()
+        
+        isRequestInProgress = true
         weak var weakSelf = self
         model.fetchWeatherDataForCity(cityName) { (data, error) in
             if error == nil && data != nil {
@@ -55,6 +58,7 @@ class WeatherViewController: UIViewController, LocationManagerDelegate, UIAlertV
                 let alertView = UIAlertView(title: "Weather fetching failed", message: "Try again after some time", delegate: nil, cancelButtonTitle: "Ok")
                 alertView.show()
             }
+            weakSelf!.isRequestInProgress = false
             self.activityIndicator.stopAnimating()
         }
     }
@@ -85,11 +89,19 @@ class WeatherViewController: UIViewController, LocationManagerDelegate, UIAlertV
 
 
     @IBAction func refreshLocation(sender: AnyObject) {
+        if self.isRequestInProgress {
+            return
+        }
+        self.isRequestInProgress = true
         LocationManager.sharedInstance.startUpdatingLocation()
     }
     
     
     @IBAction func getWeather(sender: AnyObject) {
+        if self.isRequestInProgress {
+            return
+        }
+
         self.view.endEditing(true)
         if cityField.text?.characters.count > 0 {
             self.getWeatherForCity(cityField.text!)
@@ -109,6 +121,8 @@ class WeatherViewController: UIViewController, LocationManagerDelegate, UIAlertV
     
     func locationFetchingDidFailWithErrorType(error: ErrorType) {
         
+        self.isRequestInProgress = false
+
         switch error {
             
         case .NotAuthorized:
