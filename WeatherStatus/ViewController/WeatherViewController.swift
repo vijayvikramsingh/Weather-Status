@@ -58,7 +58,7 @@ class WeatherViewController: UIViewController, LocationManagerDelegate, UIAlertV
                 let alertView = UIAlertView(title: "Weather fetching failed", message: "Try again after some time", delegate: nil, cancelButtonTitle: "Ok")
                 alertView.show()
             }
-            weakSelf!.isRequestInProgress = false
+            self.isRequestInProgress = false
             self.activityIndicator.stopAnimating()
         }
     }
@@ -89,6 +89,8 @@ class WeatherViewController: UIViewController, LocationManagerDelegate, UIAlertV
 
 
     @IBAction func refreshLocation(sender: AnyObject) {
+        self.view.endEditing(true)
+
         if self.isRequestInProgress {
             return
         }
@@ -98,11 +100,12 @@ class WeatherViewController: UIViewController, LocationManagerDelegate, UIAlertV
     
     
     @IBAction func getWeather(sender: AnyObject) {
+        self.view.endEditing(true)
+
         if self.isRequestInProgress {
             return
         }
 
-        self.view.endEditing(true)
         if cityField.text?.characters.count > 0 {
             self.getWeatherForCity(cityField.text!)
         }
